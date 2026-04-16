@@ -400,7 +400,7 @@
 
         // Shuffle Array (Fisher-Yates)
         function shuffleCards() {
-            isAllFlipped = false; // Reset flip state
+            isAllFlipped = true; // Reset flip state
             for (let i = currentCards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
