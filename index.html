@@ -59,18 +59,37 @@
             </div>
             
             <div class="flex items-center gap-3 w-full sm:w-auto">
-                <select id="categoryFilter" onchange="filterCards()" class="w-full sm:w-64 bg-white text-slate-800 border-none rounded-lg py-2 px-4 shadow-sm focus:ring-2 focus:ring-red-300 outline-none font-medium">
+                <select id="categoryFilter" onchange="filterCards()" class="w-full sm:w-72 bg-white text-slate-800 border-none rounded-lg py-2 px-4 shadow-sm focus:ring-2 focus:ring-red-300 outline-none font-medium">
                     <option value="All">All Categories</option>
-                    <option value="Canada">Canada</option>
-                    <option value="United States">United States</option>
-                    <option value="Caribbean-Mexico">Caribbean & Mexico</option>
-                    <option value="Europe">Europe</option>
-                    <option value="Middle East">Middle East</option>
-                    <option value="Asia">Asia</option>
-                    <option value="South Pacific">South Pacific</option>
-                    <option value="South America">South America</option>
-                    <option value="Africa">Africa</option>
-                    <option value="Star Alliance Airlines">Star Alliance Airlines</option>
+                    <optgroup label="Canada - General">
+                        <option value="Canada">All Canada</option>
+                    </optgroup>
+                    <optgroup label="Canada - By Province">
+                        <option value="Alberta">Alberta</option>
+                        <option value="British Columbia">British Columbia</option>
+                        <option value="Manitoba">Manitoba</option>
+                        <option value="New Brunswick">New Brunswick</option>
+                        <option value="Newfoundland and Labrador">Newfoundland & Labrador</option>
+                        <option value="Northwest Territories">Northwest Territories</option>
+                        <option value="Nova Scotia">Nova Scotia</option>
+                        <option value="Nunavut">Nunavut</option>
+                        <option value="Ontario">Ontario</option>
+                        <option value="Prince Edward Island">Prince Edward Island</option>
+                        <option value="Quebec">Quebec</option>
+                        <option value="Saskatchewan">Saskatchewan</option>
+                        <option value="Yukon">Yukon</option>
+                    </optgroup>
+                    <optgroup label="International">
+                        <option value="United States">United States</option>
+                        <option value="Caribbean-Mexico">Caribbean & Mexico</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Middle East">Middle East</option>
+                        <option value="Asia">Asia</option>
+                        <option value="South Pacific">South Pacific</option>
+                        <option value="South America">South America</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Star Alliance Airlines">Star Alliance Airlines</option>
+                    </optgroup>
                 </select>
             </div>
         </div>
@@ -102,67 +121,67 @@
     </main>
 
     <script>
-        // Data extracted from the PDF
+        // Data updated to include specific province metadata for Canadian entries
         const flashcardData = [
             // CANADA
-            { front: "Abbotsford, BC", back: "YXX", category: "Canada" },
-            { front: "Montréal Dorval, QC", back: "YUL", category: "Canada" },
-            { front: "Bagotville / Saguenay, QC", back: "YBG", category: "Canada" },
-            { front: "Nanaimo, BC", back: "YCD", category: "Canada" },
-            { front: "Bathurst, NB", back: "ZBF", category: "Canada" },
-            { front: "North Bay, ON", back: "YYB", category: "Canada" },
-            { front: "Calgary, AB", back: "YYC", category: "Canada" },
-            { front: "Ottawa, ON", back: "YOW", category: "Canada" },
-            { front: "Campbell River, BC", back: "YBL", category: "Canada" },
-            { front: "Penticton, BC", back: "YYF", category: "Canada" },
-            { front: "Castlegar, BC", back: "YCG", category: "Canada" },
-            { front: "Prince George, BC", back: "YXS", category: "Canada" },
-            { front: "Charlottetown, PE", back: "YYG", category: "Canada" },
-            { front: "Prince Rupert, BC", back: "YPR", category: "Canada" },
-            { front: "Comox, BC", back: "YQQ", category: "Canada" },
-            { front: "Quebec City, QC", back: "YQB", category: "Canada" },
-            { front: "Cranbrook, BC", back: "YXC", category: "Canada" },
-            { front: "Rankin Inlet, NU", back: "YRT", category: "Canada" },
-            { front: "Deer Lake, NL", back: "YDF", category: "Canada" },
-            { front: "Regina, SK", back: "YQR", category: "Canada" },
-            { front: "Edmonton International, AB", back: "YEG", category: "Canada" },
-            { front: "Rouyn-Noranda, QC", back: "YUY", category: "Canada" },
-            { front: "Fort McMurray, AB", back: "YMM", category: "Canada" },
-            { front: "Saint John, NB", back: "YSJ", category: "Canada" },
-            { front: "Fredericton, NB", back: "YFC", category: "Canada" },
-            { front: "Sarnia, ON", back: "YZR", category: "Canada" },
-            { front: "Gander, NF", back: "YQX", category: "Canada" },
-            { front: "Saskatoon, SK", back: "YXE", category: "Canada" },
-            { front: "Grande Prairie, AB", back: "YQU", category: "Canada" },
-            { front: "Sault Ste. Marie, ON", back: "YAM", category: "Canada" },
-            { front: "Gaspe, QC", back: "YGP", category: "Canada" },
-            { front: "Sept-Iles, QC", back: "YZV", category: "Canada" },
-            { front: "Goose Bay, NL", back: "YYR", category: "Canada" },
-            { front: "St. John's, NL", back: "YYT", category: "Canada" },
-            { front: "Halifax, NS", back: "YHZ", category: "Canada" },
-            { front: "Sudbury, ON", back: "YSB", category: "Canada" },
-            { front: "Inuvik, NT", back: "YEV", category: "Canada" },
-            { front: "Sydney, NS", back: "YQY", category: "Canada" },
-            { front: "Iqaluit / Frobisher Bay, NU", back: "YFB", category: "Canada" },
-            { front: "Thunder Bay, ON", back: "YQT", category: "Canada" },
-            { front: "Kamloops, BC", back: "YKA", category: "Canada" },
-            { front: "Timmins, ON", back: "YTS", category: "Canada" },
-            { front: "Kelowna, BC", back: "YLW", category: "Canada" },
-            { front: "Toronto Lester B. Pearson, ON", back: "YYZ", category: "Canada" },
-            { front: "Kingston, ON", back: "YGK", category: "Canada" },
-            { front: "Toronto City Centre Airport, ON", back: "YTZ", category: "Canada" },
-            { front: "Lethbridge, AB", back: "YQL", category: "Canada" },
-            { front: "Val D'Or, QC", back: "YVO", category: "Canada" },
-            { front: "London, ON", back: "YXU", category: "Canada" },
-            { front: "Medicine Hat, AB", back: "YXH", category: "Canada" },
-            { front: "Vancouver, BC", back: "YVR", category: "Canada" },
-            { front: "Windsor, ON", back: "YQG", category: "Canada" },
-            { front: "Moncton, NB", back: "YQM", category: "Canada" },
-            { front: "Winnipeg, MB", back: "YWG", category: "Canada" },
-            { front: "Victoria, BC", back: "YYJ", category: "Canada" },
-            { front: "Yellowknife, NT", back: "YZF", category: "Canada" },
-            { front: "Wabush, NL", back: "YWK", category: "Canada" },
-            { front: "Whitehorse, YT", back: "YXY", category: "Canada" },
+            { front: "Abbotsford, BC", back: "YXX", category: "Canada", province: "British Columbia" },
+            { front: "Montréal Dorval, QC", back: "YUL", category: "Canada", province: "Quebec" },
+            { front: "Bagotville / Saguenay, QC", back: "YBG", category: "Canada", province: "Quebec" },
+            { front: "Nanaimo, BC", back: "YCD", category: "Canada", province: "British Columbia" },
+            { front: "Bathurst, NB", back: "ZBF", category: "Canada", province: "New Brunswick" },
+            { front: "North Bay, ON", back: "YYB", category: "Canada", province: "Ontario" },
+            { front: "Calgary, AB", back: "YYC", category: "Canada", province: "Alberta" },
+            { front: "Ottawa, ON", back: "YOW", category: "Canada", province: "Ontario" },
+            { front: "Campbell River, BC", back: "YBL", category: "Canada", province: "British Columbia" },
+            { front: "Penticton, BC", back: "YYF", category: "Canada", province: "British Columbia" },
+            { front: "Castlegar, BC", back: "YCG", category: "Canada", province: "British Columbia" },
+            { front: "Prince George, BC", back: "YXS", category: "Canada", province: "British Columbia" },
+            { front: "Charlottetown, PE", back: "YYG", category: "Canada", province: "Prince Edward Island" },
+            { front: "Prince Rupert, BC", back: "YPR", category: "Canada", province: "British Columbia" },
+            { front: "Comox, BC", back: "YQQ", category: "Canada", province: "British Columbia" },
+            { front: "Quebec City, QC", back: "YQB", category: "Canada", province: "Quebec" },
+            { front: "Cranbrook, BC", back: "YXC", category: "Canada", province: "British Columbia" },
+            { front: "Rankin Inlet, NU", back: "YRT", category: "Canada", province: "Nunavut" },
+            { front: "Deer Lake, NL", back: "YDF", category: "Canada", province: "Newfoundland and Labrador" },
+            { front: "Regina, SK", back: "YQR", category: "Canada", province: "Saskatchewan" },
+            { front: "Edmonton International, AB", back: "YEG", category: "Canada", province: "Alberta" },
+            { front: "Rouyn-Noranda, QC", back: "YUY", category: "Canada", province: "Quebec" },
+            { front: "Fort McMurray, AB", back: "YMM", category: "Canada", province: "Alberta" },
+            { front: "Saint John, NB", back: "YSJ", category: "Canada", province: "New Brunswick" },
+            { front: "Fredericton, NB", back: "YFC", category: "Canada", province: "New Brunswick" },
+            { front: "Sarnia, ON", back: "YZR", category: "Canada", province: "Ontario" },
+            { front: "Gander, NF", back: "YQX", category: "Canada", province: "Newfoundland and Labrador" },
+            { front: "Saskatoon, SK", back: "YXE", category: "Canada", province: "Saskatchewan" },
+            { front: "Grande Prairie, AB", back: "YQU", category: "Canada", province: "Alberta" },
+            { front: "Sault Ste. Marie, ON", back: "YAM", category: "Canada", province: "Ontario" },
+            { front: "Gaspe, QC", back: "YGP", category: "Canada", province: "Quebec" },
+            { front: "Sept-Iles, QC", back: "YZV", category: "Canada", province: "Quebec" },
+            { front: "Goose Bay, NL", back: "YYR", category: "Canada", province: "Newfoundland and Labrador" },
+            { front: "St. John's, NL", back: "YYT", category: "Canada", province: "Newfoundland and Labrador" },
+            { front: "Halifax, NS", back: "YHZ", category: "Canada", province: "Nova Scotia" },
+            { front: "Sudbury, ON", back: "YSB", category: "Canada", province: "Ontario" },
+            { front: "Inuvik, NT", back: "YEV", category: "Canada", province: "Northwest Territories" },
+            { front: "Sydney, NS", back: "YQY", category: "Canada", province: "Nova Scotia" },
+            { front: "Iqaluit / Frobisher Bay, NU", back: "YFB", category: "Canada", province: "Nunavut" },
+            { front: "Thunder Bay, ON", back: "YQT", category: "Canada", province: "Ontario" },
+            { front: "Kamloops, BC", back: "YKA", category: "Canada", province: "British Columbia" },
+            { front: "Timmins, ON", back: "YTS", category: "Canada", province: "Ontario" },
+            { front: "Kelowna, BC", back: "YLW", category: "Canada", province: "British Columbia" },
+            { front: "Toronto Lester B. Pearson, ON", back: "YYZ", category: "Canada", province: "Ontario" },
+            { front: "Kingston, ON", back: "YGK", category: "Canada", province: "Ontario" },
+            { front: "Toronto City Centre Airport, ON", back: "YTZ", category: "Canada", province: "Ontario" },
+            { front: "Lethbridge, AB", back: "YQL", category: "Canada", province: "Alberta" },
+            { front: "Val D'Or, QC", back: "YVO", category: "Canada", province: "Quebec" },
+            { front: "London, ON", back: "YXU", category: "Canada", province: "Ontario" },
+            { front: "Medicine Hat, AB", back: "YXH", category: "Canada", province: "Alberta" },
+            { front: "Vancouver, BC", back: "YVR", category: "Canada", province: "British Columbia" },
+            { front: "Windsor, ON", back: "YQG", category: "Canada", province: "Ontario" },
+            { front: "Moncton, NB", back: "YQM", category: "Canada", province: "New Brunswick" },
+            { front: "Winnipeg, MB", back: "YWG", category: "Canada", province: "Manitoba" },
+            { front: "Victoria, BC", back: "YYJ", category: "Canada", province: "British Columbia" },
+            { front: "Yellowknife, NT", back: "YZF", category: "Canada", province: "Northwest Territories" },
+            { front: "Wabush, NL", back: "YWK", category: "Canada", province: "Newfoundland and Labrador" },
+            { front: "Whitehorse, YT", back: "YXY", category: "Canada", province: "Yukon" },
 
             // UNITED STATES
             { front: "Allentown, PA", back: "ABE", category: "United States" },
@@ -334,25 +353,25 @@
             const container = document.getElementById('flashcardsContainer');
             container.innerHTML = ''; // Clear container
 
-            currentCards.forEach((card, index) => {
+            currentCards.forEach((card) => {
                 const cardHTML = `
                     <div class="h-40 perspective-1000 cursor-pointer no-select group" onclick="toggleFlip(this)">
                         <div class="card-inner relative w-full h-full transform-style-3d shadow-md hover:shadow-xl rounded-xl transition-shadow ${isAllFlipped ? 'rotate-y-180' : ''}">
                             
                             <!-- Front of card (City / Airline Name) -->
                             <div class="absolute w-full h-full backface-hidden bg-white border border-slate-200 rounded-xl flex flex-col items-center justify-center p-4 text-center">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">${card.category}</span>
+                                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">${card.province || card.category}</span>
                                 <h3 class="text-lg font-bold text-slate-800 leading-tight">${card.front}</h3>
-                                <div class="absolute bottom-3 right-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <i class="fa-solid fa-rotate"></i>
+                                <div class="absolute bottom-2 right-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fa-solid fa-rotate text-xs"></i>
                                 </div>
                             </div>
 
                             <!-- Back of card (Designator Code) -->
                             <div class="absolute w-full h-full backface-hidden bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center p-4 rotate-y-180">
                                 <h2 class="text-4xl font-black tracking-widest text-white">${card.back}</h2>
-                                <div class="absolute bottom-3 left-3 text-slate-500">
-                                    <i class="fa-solid fa-rotate"></i>
+                                <div class="absolute bottom-2 left-3 text-slate-500">
+                                    <i class="fa-solid fa-rotate text-xs"></i>
                                 </div>
                             </div>
 
@@ -387,20 +406,25 @@
 
         // Filter functionality
         function filterCards() {
-            const category = document.getElementById('categoryFilter').value;
+            const filterValue = document.getElementById('categoryFilter').value;
             isAllFlipped = false; // Reset flip state on filter change
             
-            if (category === 'All') {
+            if (filterValue === 'All') {
                 currentCards = [...flashcardData];
+            } else if (filterValue === 'Canada') {
+                currentCards = flashcardData.filter(card => card.category === 'Canada');
             } else {
-                currentCards = flashcardData.filter(card => card.category === category);
+                // Filter by Category OR specific Province
+                currentCards = flashcardData.filter(card => 
+                    card.category === filterValue || card.province === filterValue
+                );
             }
             renderCards();
         }
 
         // Shuffle Array (Fisher-Yates)
         function shuffleCards() {
-            isAllFlipped = true; // Reset flip state
+            isAllFlipped = false; // Usually better to see front after shuffle
             for (let i = currentCards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
