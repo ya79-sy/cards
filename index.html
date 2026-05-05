@@ -1,416 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aviation Designator Codes Flashcards</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* 3D Flip Card Styles */
-        .perspective-1000 {
-            perspective: 1000px;
-        }
-        .transform-style-3d {
-            transform-style: preserve-3d;
-        }
-        .backface-hidden {
-            backface-visibility: hidden;
-        }
-        .rotate-y-180 {
-            transform: rotateY(180deg);
-        }
-        .card-inner {
-            transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        
-        /* Disable text selection so double tapping doesn't highlight text */
-        .no-select {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
-    </style>
-</head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
-
-    <!-- Header -->
-    <header class="bg-red-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-plane-departure text-2xl"></i>
-                <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Designator Codes Training</h1>
-            </div>
-            
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-                <select id="categoryFilter" onchange="filterCards()" class="w-full sm:w-64 bg-white text-slate-800 border-none rounded-lg py-2 px-4 shadow-sm focus:ring-2 focus:ring-red-300 outline-none font-medium">
-                    <option value="All">All Categories</option>
-                    <option value="Canada">Canada</option>
-                    <option value="United States">United States</option>
-                    <option value="Caribbean-Mexico">Caribbean & Mexico</option>
-                    <option value="Europe">Europe</option>
-                    <option value="Middle East">Middle East</option>
-                    <option value="Asia">Asia</option>
-                    <option value="South Pacific">South Pacific</option>
-                    <option value="South America">South America</option>
-                    <option value="Africa">Africa</option>
-                    <option value="Star Alliance Airlines">Star Alliance Airlines</option>
-                </select>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Controls -->
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-            <div class="text-slate-500 font-medium" id="cardCount">
-                Loading cards...
-            </div>
-            <div class="flex gap-3 w-full sm:w-auto">
-                <button onclick="shuffleCards()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-shuffle"></i> Shuffle
-                </button>
-                <button onclick="flipAll()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-layer-group"></i> Flip All
-                </button>
-            </div>
-        </div>
-
-        <!-- Flashcards Grid -->
-        <div id="flashcardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            <!-- Cards will be injected here via JavaScript -->
-        </div>
-
-    </main>
-
-    <script>
-        // Data extracted from the PDF
-        const flashcardData = [
-            // CANADA
-            { front: "Abbotsford, BC", back: "YXX", category: "Canada" },
-            { front: "Montréal Dorval, QC", back: "YUL", category: "Canada" },
-            { front: "Bagotville / Saguenay, QC", back: "YBG", category: "Canada" },
-            { front: "Nanaimo, BC", back: "YCD", category: "Canada" },
-            { front: "Bathurst, NB", back: "ZBF", category: "Canada" },
-            { front: "North Bay, ON", back: "YYB", category: "Canada" },
-            { front: "Calgary, AB", back: "YYC", category: "Canada" },
-            { front: "Ottawa, ON", back: "YOW", category: "Canada" },
-            { front: "Campbell River, BC", back: "YBL", category: "Canada" },
-            { front: "Penticton, BC", back: "YYF", category: "Canada" },
-            { front: "Castlegar, BC", back: "YCG", category: "Canada" },
-            { front: "Prince George, BC", back: "YXS", category: "Canada" },
-            { front: "Charlottetown, PE", back: "YYG", category: "Canada" },
-            { front: "Prince Rupert, BC", back: "YPR", category: "Canada" },
-            { front: "Comox, BC", back: "YQQ", category: "Canada" },
-            { front: "Quebec City, QC", back: "YQB", category: "Canada" },
-            { front: "Cranbrook, BC", back: "YXC", category: "Canada" },
-            { front: "Rankin Inlet, NU", back: "YRT", category: "Canada" },
-            { front: "Deer Lake, NL", back: "YDF", category: "Canada" },
-            { front: "Regina, SK", back: "YQR", category: "Canada" },
-            { front: "Edmonton International, AB", back: "YEG", category: "Canada" },
-            { front: "Rouyn-Noranda, QC", back: "YUY", category: "Canada" },
-            { front: "Fort McMurray, AB", back: "YMM", category: "Canada" },
-            { front: "Saint John, NB", back: "YSJ", category: "Canada" },
-            { front: "Fredericton, NB", back: "YFC", category: "Canada" },
-            { front: "Sarnia, ON", back: "YZR", category: "Canada" },
-            { front: "Gander, NF", back: "YQX", category: "Canada" },
-            { front: "Saskatoon, SK", back: "YXE", category: "Canada" },
-            { front: "Grande Prairie, AB", back: "YQU", category: "Canada" },
-            { front: "Sault Ste. Marie, ON", back: "YAM", category: "Canada" },
-            { front: "Gaspe, QC", back: "YGP", category: "Canada" },
-            { front: "Sept-Iles, QC", back: "YZV", category: "Canada" },
-            { front: "Goose Bay, NL", back: "YYR", category: "Canada" },
-            { front: "St. John's, NL", back: "YYT", category: "Canada" },
-            { front: "Halifax, NS", back: "YHZ", category: "Canada" },
-            { front: "Sudbury, ON", back: "YSB", category: "Canada" },
-            { front: "Inuvik, NT", back: "YEV", category: "Canada" },
-            { front: "Sydney, NS", back: "YQY", category: "Canada" },
-            { front: "Iqaluit / Frobisher Bay, NU", back: "YFB", category: "Canada" },
-            { front: "Thunder Bay, ON", back: "YQT", category: "Canada" },
-            { front: "Kamloops, BC", back: "YKA", category: "Canada" },
-            { front: "Timmins, ON", back: "YTS", category: "Canada" },
-            { front: "Kelowna, BC", back: "YLW", category: "Canada" },
-            { front: "Toronto Lester B. Pearson, ON", back: "YYZ", category: "Canada" },
-            { front: "Kingston, ON", back: "YGK", category: "Canada" },
-            { front: "Toronto City Centre Airport, ON", back: "YTZ", category: "Canada" },
-            { front: "Lethbridge, AB", back: "YQL", category: "Canada" },
-            { front: "Val D'Or, QC", back: "YVO", category: "Canada" },
-            { front: "London, ON", back: "YXU", category: "Canada" },
-            { front: "Medicine Hat, AB", back: "YXH", category: "Canada" },
-            { front: "Vancouver, BC", back: "YVR", category: "Canada" },
-            { front: "Windsor, ON", back: "YQG", category: "Canada" },
-            { front: "Moncton, NB", back: "YQM", category: "Canada" },
-            { front: "Winnipeg, MB", back: "YWG", category: "Canada" },
-            { front: "Victoria, BC", back: "YYJ", category: "Canada" },
-            { front: "Yellowknife, NT", back: "YZF", category: "Canada" },
-            { front: "Wabush, NL", back: "YWK", category: "Canada" },
-            { front: "Whitehorse, YT", back: "YXY", category: "Canada" },
-
-            // UNITED STATES
-            { front: "Allentown, PA", back: "ABE", category: "United States" },
-            { front: "Albany, NY", back: "ALB", category: "United States" },
-            { front: "Atlanta, GA", back: "ATL", category: "United States" },
-            { front: "Austin, TX", back: "AUS", category: "United States" },
-            { front: "Baltimore, MD (DC)", back: "BWI", category: "United States" },
-            { front: "Boston Logan, MA", back: "BOS", category: "United States" },
-            { front: "Charlotte, NC", back: "CLT", category: "United States" },
-            { front: "Chicago O'Hare, IL", back: "ORD", category: "United States" },
-            { front: "Cincinnati, OH", back: "CVG", category: "United States" },
-            { front: "Cleveland, OH", back: "CLE", category: "United States" },
-            { front: "Columbus, OH", back: "CMH", category: "United States" },
-            { front: "Dallas / Fort Worth, TX", back: "DFW", category: "United States" },
-            { front: "Dayton, OH", back: "DAY", category: "United States" },
-            { front: "Denver, CO", back: "DEN", category: "United States" },
-            { front: "Detroit, MI", back: "DTW", category: "United States" },
-            { front: "Fort Lauderdale, FL", back: "FLL", category: "United States" },
-            { front: "Fort Myers, FL", back: "RSW", category: "United States" },
-            { front: "Grand Rapids, MI", back: "GRR", category: "United States" },
-            { front: "Harrisburg, PA", back: "MDT", category: "United States" },
-            { front: "Hartford, CT", back: "BDL", category: "United States" },
-            { front: "Honolulu, HI", back: "HNL", category: "United States" },
-            { front: "Houston, TX", back: "IAH", category: "United States" },
-            { front: "Kahului (Maui), HI", back: "OGG", category: "United States" },
-            { front: "Kansas City, MO", back: "MCI", category: "United States" },
-            { front: "Las Vegas, NV", back: "LAS", category: "United States" },
-            { front: "San Juan, Puerto Rico", back: "SJU", category: "United States" },
-            { front: "Los Angeles, CA", back: "LAX", category: "United States" },
-            { front: "Miami, FL", back: "MIA", category: "United States" },
-            { front: "Milwaukee, WI", back: "MKE", category: "United States" },
-            { front: "Minneapolis / St. Paul, MN", back: "MSP", category: "United States" },
-            { front: "Nashville, TN", back: "BNA", category: "United States" },
-            { front: "Newark, NJ", back: "EWR", category: "United States" },
-            { front: "New York La Guardia, NY", back: "LGA", category: "United States" },
-            { front: "New York JFK, NY", back: "JFK", category: "United States" },
-            { front: "New Orleans, LA", back: "MSY", category: "United States" },
-            { front: "Orlando, FL", back: "MCO", category: "United States" },
-            { front: "Philadelphia, PA", back: "PHL", category: "United States" },
-            { front: "Phoenix, AZ", back: "PHX", category: "United States" },
-            { front: "Pittsburgh, PA", back: "PIT", category: "United States" },
-            { front: "Portland, OR", back: "PDX", category: "United States" },
-            { front: "Raleigh / Durham, NC", back: "RDU", category: "United States" },
-            { front: "Richmond, VA", back: "RIC", category: "United States" },
-            { front: "San Diego, CA", back: "SAN", category: "United States" },
-            { front: "San Jose, CA", back: "SJC", category: "United States" },
-            { front: "San Francisco, CA", back: "SFO", category: "United States" },
-            { front: "Seattle, WA", back: "SEA", category: "United States" },
-            { front: "St. Louis, MO", back: "STL", category: "United States" },
-            { front: "Syracuse, NY", back: "SYR", category: "United States" },
-            { front: "Tampa, FL", back: "TPA", category: "United States" },
-            { front: "Washington Dulles, VA", back: "IAD", category: "United States" },
-            { front: "Washington Ronald Reagan, DC", back: "DCA", category: "United States" },
-            { front: "West Palm Beach, FL", back: "PBI", category: "United States" },
-
-            // CARIBBEAN-MEXICO
-            { front: "Antigua", back: "ANU", category: "Caribbean-Mexico" },
-            { front: "Bridgetown, Barbados", back: "BGI", category: "Caribbean-Mexico" },
-            { front: "Bermuda", back: "BDA", category: "Caribbean-Mexico" },
-            { front: "Cancun, Mexico", back: "CUN", category: "Caribbean-Mexico" },
-            { front: "Fort de France, Martinique", back: "FDF", category: "Caribbean-Mexico" },
-            { front: "Kingston, Jamaica", back: "KIN", category: "Caribbean-Mexico" },
-            { front: "Havana, Cuba", back: "HAV", category: "Caribbean-Mexico" },
-            { front: "Holguin, Cuba", back: "HOG", category: "Caribbean-Mexico" },
-            { front: "Montego Bay, Jamaica", back: "MBJ", category: "Caribbean-Mexico" },
-            { front: "Nassau, Bahamas", back: "NAS", category: "Caribbean-Mexico" },
-            { front: "Port au Prince, Haiti", back: "PAP", category: "Caribbean-Mexico" },
-            { front: "Port of Spain, Trinidad", back: "POS", category: "Caribbean-Mexico" },
-            { front: "St. Lucia", back: "UVF", category: "Caribbean-Mexico" },
-            { front: "Mexico City, Mexico", back: "MEX", category: "Caribbean-Mexico" },
-            { front: "Puerto Vallarta, Mexico", back: "PVR", category: "Caribbean-Mexico" },
-
-            // EUROPE
-            { front: "Amsterdam, Netherlands", back: "AMS", category: "Europe" },
-            { front: "Istanbul, Turkey", back: "IST", category: "Europe" },
-            { front: "Athens, Greece", back: "ATH", category: "Europe" },
-            { front: "Lisbon, Portugal", back: "LIS", category: "Europe" },
-            { front: "Brussels, Belgium", back: "BRU", category: "Europe" },
-            { front: "London Heathrow, England", back: "LHR", category: "Europe" },
-            { front: "Budapest, Hungary", back: "BUD", category: "Europe" },
-            { front: "Madrid, Spain", back: "MAD", category: "Europe" },
-            { front: "Copenhagen, Denmark", back: "CPH", category: "Europe" },
-            { front: "Manchester, England", back: "MAN", category: "Europe" },
-            { front: "Dublin, Ireland", back: "DUB", category: "Europe" },
-            { front: "Milan Malpensa, Italy", back: "MXP", category: "Europe" },
-            { front: "Düsseldorf, Germany", back: "DUS", category: "Europe" },
-            { front: "Munich, Germany", back: "MUC", category: "Europe" },
-            { front: "Edinburgh, Scotland", back: "EDI", category: "Europe" },
-            { front: "Paris CDG, France", back: "CDG", category: "Europe" },
-            { front: "Frankfurt, Germany", back: "FRA", category: "Europe" },
-            { front: "Rome Fiumicino, Italy", back: "FCO", category: "Europe" },
-            { front: "Glasgow, Scotland", back: "GLA", category: "Europe" },
-            { front: "Zurich, Switzerland", back: "ZRH", category: "Europe" },
-            { front: "Prague, Czechia", back: "PRG", category: "Europe" },
-            { front: "Barcelona, Spain", back: "BCN", category: "Europe" },
-
-            // MIDDLE EAST
-            { front: "Amman, Jordan", back: "AMM", category: "Middle East" },
-            { front: "Cairo, Egypt", back: "CAI", category: "Middle East" },
-            { front: "Dubai, UAE", back: "DXB", category: "Middle East" },
-            { front: "Tel Aviv, Israel", back: "TLV", category: "Middle East" },
-
-            // ASIA
-            { front: "Hong Kong", back: "HKG", category: "Asia" },
-            { front: "Delhi, India", back: "DEL", category: "Asia" },
-            { front: "Tokyo Haneda, Japan", back: "HND", category: "Asia" },
-            { front: "Seoul Incheon, South Korea", back: "ICN", category: "Asia" },
-            { front: "Beijing, China", back: "PEK", category: "Asia" },
-            { front: "Shanghai (Pu Dong), China", back: "PVG", category: "Asia" },
-            { front: "Taipei, Taiwan", back: "TPE", category: "Asia" },
-            { front: "Tokyo Narita, Japan", back: "NRT", category: "Asia" },
-            { front: "Bangkok, Thailand", back: "BKK", category: "Asia" },
-            { front: "Manilla, Philippines", back: "MNL", category: "Asia" },
-
-            // SOUTH PACIFIC
-            { front: "Auckland, NZ", back: "AKL", category: "South Pacific" },
-            { front: "Brisbane, AU", back: "BNE", category: "South Pacific" },
-            { front: "Melbourne, AU", back: "MEL", category: "South Pacific" },
-            { front: "Sydney, AU", back: "SYD", category: "South Pacific" },
-
-            // SOUTH AMERICA
-            { front: "Bogota, Colombia", back: "BOG", category: "South America" },
-            { front: "Buenos Aires Ezeiza, Argentina", back: "EZE", category: "South America" },
-            { front: "Caracas, Venezuela", back: "CCS", category: "South America" },
-            { front: "Rio De Janeiro, Brazil", back: "GIG", category: "South America" },
-            { front: "Lima, Peru", back: "LIM", category: "South America" },
-            { front: "Sao Paulo Guarulhos, Brazil", back: "GRU", category: "South America" },
-            { front: "Santiago, Chile", back: "SCL", category: "South America" },
-
-            // AFRICA
-            { front: "Cape Town, South Africa", back: "CPT", category: "Africa" },
-            { front: "Harare, Zimbabwe", back: "HRE", category: "Africa" },
-            { front: "Johannesburg, South Africa", back: "JNB", category: "Africa" },
-            { front: "Nairobi, Kenya", back: "NBO", category: "Africa" },
-
-            // STAR ALLIANCE AIRLINES
-            { front: "Aegean", back: "A3", category: "Star Alliance Airlines" },
-            { front: "Air China", back: "CA", category: "Star Alliance Airlines" },
-            { front: "Swiss", back: "LX", category: "Star Alliance Airlines" },
-            { front: "Air Canada", back: "AC", category: "Star Alliance Airlines" },
-            { front: "Air New Zealand", back: "NZ", category: "Star Alliance Airlines" },
-            { front: "Thai", back: "TG", category: "Star Alliance Airlines" },
-            { front: "Air India", back: "AI", category: "Star Alliance Airlines" },
-            { front: "Asiana Airlines", back: "OZ", category: "Star Alliance Airlines" },
-            { front: "United Airlines", back: "UA", category: "Star Alliance Airlines" },
-            { front: "ANA All Nippon", back: "NH", category: "Star Alliance Airlines" },
-            { front: "Avianca", back: "AV", category: "Star Alliance Airlines" },
-            { front: "TAP Portugal", back: "TP", category: "Star Alliance Airlines" },
-            { front: "Austrian Airlines", back: "OS", category: "Star Alliance Airlines" },
-            { front: "Copa Airlines", back: "CM", category: "Star Alliance Airlines" },
-            { front: "Turkish Airlines", back: "TK", category: "Star Alliance Airlines" },
-            { front: "Brussels Airlines", back: "SN", category: "Star Alliance Airlines" },
-            { front: "Egypt Air", back: "MS", category: "Star Alliance Airlines" },
-            { front: "Lufthansa", back: "LH", category: "Star Alliance Airlines" },
-            { front: "Singapore Airlines", back: "SQ", category: "Star Alliance Airlines" },
-            { front: "Eva Air", back: "BR", category: "Star Alliance Airlines" },
-            { front: "Croatia", back: "OU", category: "Star Alliance Airlines" },
-            { front: "Ethiopian Airlines", back: "ET", category: "Star Alliance Airlines" },
-            { front: "Shenzhen Airlines", back: "ZH", category: "Star Alliance Airlines" },
-            { front: "Lot Polish Airlines", back: "LO", category: "Star Alliance Airlines" },
-            { front: "South African Airways", back: "SA", category: "Star Alliance Airlines" }
-        ];
-
-        let currentCards = [...flashcardData];
-        let isAllFlipped = false;
-
-        // Render cards to the DOM
-        function renderCards() {
-            const container = document.getElementById('flashcardsContainer');
-            container.innerHTML = ''; // Clear container
-
-            currentCards.forEach((card, index) => {
-                const cardHTML = `
-                    <div class="h-40 perspective-1000 cursor-pointer no-select group" onclick="toggleFlip(this)">
-                        <div class="card-inner relative w-full h-full transform-style-3d shadow-md hover:shadow-xl rounded-xl transition-shadow ${isAllFlipped ? 'rotate-y-180' : ''}">
-                            
-                            <!-- Front of card (City / Airline Name) -->
-                            <div class="absolute w-full h-full backface-hidden bg-white border border-slate-200 rounded-xl flex flex-col items-center justify-center p-4 text-center">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">${card.category}</span>
-                                <h3 class="text-lg font-bold text-slate-800 leading-tight">${card.front}</h3>
-                                <div class="absolute bottom-3 right-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <i class="fa-solid fa-rotate"></i>
-                                </div>
-                            </div>
-
-                            <!-- Back of card (Designator Code) -->
-                            <div class="absolute w-full h-full backface-hidden bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center p-4 rotate-y-180">
-                                <h2 class="text-4xl font-black tracking-widest text-white">${card.back}</h2>
-                                <div class="absolute bottom-3 left-3 text-slate-500">
-                                    <i class="fa-solid fa-rotate"></i>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', cardHTML);
-            });
-
-            // Update Count
-            document.getElementById('cardCount').innerText = `Showing ${currentCards.length} cards`;
-        }
-
-        // Toggle individual flip
-        function toggleFlip(element) {
-            const inner = element.querySelector('.card-inner');
-            inner.classList.toggle('rotate-y-180');
-        }
-
-        // Toggle all cards
-        function flipAll() {
-            isAllFlipped = !isAllFlipped;
-            const inners = document.querySelectorAll('.card-inner');
-            inners.forEach(inner => {
-                if (isAllFlipped) {
-                    inner.classList.add('rotate-y-180');
-                } else {
-                    inner.classList.remove('rotate-y-180');
-                }
-            });
-        }
-
-        // Filter functionality
-        function filterCards() {
-            const category = document.getElementById('categoryFilter').value;
-            isAllFlipped = false; // Reset flip state on filter change
-            
-            if (category === 'All') {
-                currentCards = [...flashcardData];
-            } else {
-                currentCards = flashcardData.filter(card => card.category === category);
-            }
-            renderCards();
-        }
-
-        // Shuffle Array (Fisher-Yates)
-        function shuffleCards() {
-            isAllFlipped = true; // Reset flip state
-            for (let i = currentCards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
-            }
-            renderCards();
-        }
-
-        // Initial render
-        window.onload = renderCards;
-
-    </script>
-</body>
-</html>
+<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>
+<title>Canada Codes Flashcards</title>
+<style>
+:root{--accent:#dc2626;--muted:#64748b}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f8fafc,#e2e8f0);color:#0f172a}
+.wrap{max-width:900px;margin:0 auto;padding:14px;padding-bottom:96px} .top{position:sticky;top:0;z-index:20;background:rgba(248,250,252,.92);backdrop-filter:blur(8px);border-bottom:1px solid #e5e7eb;margin:0 -14px 12px;padding:12px 14px}
+h1{margin:0 0 8px;font-size:1.15rem} .sub{font-size:.88rem;color:var(--muted);margin-bottom:10px} .controls,.segment,.row{display:grid;gap:8px;grid-template-columns:1fr 1fr} .full{grid-column:1/-1}
+input,select,button{width:100%;border-radius:14px;border:1px solid #cbd5e1;padding:12px 14px;font-size:16px;background:#fff} button{font-weight:700} .primary{background:var(--accent);color:#fff;border-color:var(--accent)} .secondary{background:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0} .stat{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:10px;text-align:center} .stat b{display:block;font-size:1.15rem}
+.card{margin-top:10px;perspective:1000px;height:280px} .inner{position:relative;width:100%;height:100%;transition:transform .45s ease;transform-style:preserve-3d} .card.flipped .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;box-shadow:0 12px 30px rgba(15,23,42,.08);border:1px solid #e5e7eb}
+.front{background:#fff} .back{background:#111827;color:#fff;transform:rotateY(180deg)} .cat{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px} .front .main{font-size:1.6rem;font-weight:800;line-height:1.2} .back .main{font-size:3rem;font-weight:900;letter-spacing:.08em} .hint{position:absolute;bottom:14px;font-size:.85rem;opacity:.65}
+.quiz{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:14px;margin-top:12px} .hidden{display:none!important} .choices{display:grid;gap:8px;margin-top:12px} .choice{text-align:left} .choice.good{background:#dcfce7;border-color:#86efac} .choice.bad{background:#fee2e2;border-color:#fca5a5} .msg{margin-top:10px;font-weight:700}
+.footerbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-top:1px solid #e5e7eb;padding:10px 12px calc(10px + env(safe-area-inset-bottom))} .footergrid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px} .small{font-size:.82rem;color:var(--muted)} .note{margin-top:12px;color:var(--muted);font-size:.88rem;text-align:center}
+</style></head><body>
+<div class='wrap'><div class='top'><h1>Canada Codes Flashcards</h1><div class='sub'>Province and territory study mode</div>
+<div class='controls'><input id='search' class='full' placeholder='Search city or code'><select id='category' class='full'></select>
+<div class='segment full'><button id='modeFlash' class='secondary'>Flashcards</button><button id='modeQuiz' class='secondary'>Quiz</button></div>
+<div class='segment full'><button id='dirCity' class='secondary'>City → Code</button><button id='dirCode' class='secondary'>Code → City</button></div></div></div>
+<div class='stats'><div class='stat'><span class='small'>Cards</span><b id='countCards'>0</b></div><div class='stat'><span class='small'>Correct</span><b id='countCorrect'>0</b></div><div class='stat'><span class='small'>Wrong</span><b id='countWrong'>0</b></div></div>
+<div id='flashView'><div class='card' id='cardWrap'><div class='inner'><div class='face front'><div class='cat' id='frontCat'></div><div class='main' id='frontMain'></div><div class='hint'>Tap to flip</div></div><div class='face back'><div class='cat' id='backCat'></div><div class='main' id='backMain'></div><div class='hint'>Tap to flip back</div></div></div></div><div class='row' style='margin-top:12px'><button id='prevBtn' class='secondary'>Previous</button><button id='nextBtn' class='primary'>Next</button></div></div>
+<div id='quizView' class='hidden'><div class='quiz'><div class='small' id='quizCat'></div><div style='font-size:1.45rem;font-weight:800;line-height:1.25;margin-top:6px' id='quizQuestion'></div><div class='choices' id='quizChoices'></div><div class='msg' id='quizMsg'></div><div class='row' style='margin-top:12px'><button id='quizSkip' class='secondary'>Skip</button><button id='quizNext' class='primary'>Next Question</button></div></div></div>
+<div class='note'>Progress saves automatically on this device.</div></div>
+<div class='footerbar'><div class='footergrid'><button id='shuffleBtn' class='secondary'>Shuffle</button><button id='wrongOnlyBtn' class='secondary'>Wrong Only</button><button id='resetBtn' class='secondary'>Reset</button></div></div>
+<script>
+const allCards = [{"front": "Abbotsford", "back": "YXX", "category": "British Columbia (BC)"}, {"front": "Nanaimo", "back": "YCD", "category": "British Columbia (BC)"}, {"front": "Campbell River", "back": "YBL", "category": "British Columbia (BC)"}, {"front": "Castlegar", "back": "YCG", "category": "British Columbia (BC)"}, {"front": "Comox", "back": "YQQ", "category": "British Columbia (BC)"}, {"front": "Cranbrook", "back": "YXC", "category": "British Columbia (BC)"}, {"front": "Kamloops", "back": "YKA", "category": "British Columbia (BC)"}, {"front": "Kelowna", "back": "YLW", "category": "British Columbia (BC)"}, {"front": "Penticton", "back": "YYF", "category": "British Columbia (BC)"}, {"front": "Prince George", "back": "YXS", "category": "British Columbia (BC)"}, {"front": "Prince Rupert", "back": "YPR", "category": "British Columbia (BC)"}, {"front": "Vancouver", "back": "YVR", "category": "British Columbia (BC)"}, {"front": "Victoria", "back": "YYJ", "category": "British Columbia (BC)"}, {"front": "Calgary", "back": "YYC", "category": "Alberta (AB)"}, {"front": "Edmonton International", "back": "YEG", "category": "Alberta (AB)"}, {"front": "Fort McMurray", "back": "YMM", "category": "Alberta (AB)"}, {"front": "Grande Prairie", "back": "YQU", "category": "Alberta (AB)"}, {"front": "Lethbridge", "back": "YQL", "category": "Alberta (AB)"}, {"front": "Medicine Hat", "back": "YXH", "category": "Alberta (AB)"}, {"front": "Regina", "back": "YQR", "category": "Saskatchewan (SK)"}, {"front": "Saskatoon", "back": "YXE", "category": "Saskatchewan (SK)"}, {"front": "Winnipeg", "back": "YWG", "category": "Manitoba (MB)"}, {"front": "North Bay", "back": "YYB", "category": "Ontario (ON)"}, {"front": "Ottawa", "back": "YOW", "category": "Ontario (ON)"}, {"front": "Sarnia", "back": "YZR", "category": "Ontario (ON)"}, {"front": "Sault Ste. Marie", "back": "YAM", "category": "Ontario (ON)"}, {"front": "Sudbury", "back": "YSB", "category": "Ontario (ON)"}, {"front": "Thunder Bay", "back": "YQT", "category": "Ontario (ON)"}, {"front": "Timmins", "back": "YTS", "category": "Ontario (ON)"}, {"front": "Toronto Pearson", "back": "YYZ", "category": "Ontario (ON)"}, {"front": "Toronto City Centre", "back": "YTZ", "category": "Ontario (ON)"}, {"front": "Kingston", "back": "YGK", "category": "Ontario (ON)"}, {"front": "London", "back": "YXU", "category": "Ontario (ON)"}, {"front": "Windsor", "back": "YQG", "category": "Ontario (ON)"}, {"front": "Montréal Dorval", "back": "YUL", "category": "Quebec (QC)"}, {"front": "Bagotville / Saguenay", "back": "YBG", "category": "Quebec (QC)"}, {"front": "Quebec City", "back": "YQB", "category": "Quebec (QC)"}, {"front": "Rouyn-Noranda", "back": "YUY", "category": "Quebec (QC)"}, {"front": "Gaspé", "back": "YGP", "category": "Quebec (QC)"}, {"front": "Sept-Îles", "back": "YZV", "category": "Quebec (QC)"}, {"front": "Val d'Or", "back": "YVO", "category": "Quebec (QC)"}, {"front": "Bathurst", "back": "ZBF", "category": "New Brunswick (NB)"}, {"front": "Saint John", "back": "YSJ", "category": "New Brunswick (NB)"}, {"front": "Fredericton", "back": "YFC", "category": "New Brunswick (NB)"}, {"front": "Moncton", "back": "YQM", "category": "New Brunswick (NB)"}, {"front": "Halifax", "back": "YHZ", "category": "Nova Scotia (NS)"}, {"front": "Sydney", "back": "YQY", "category": "Nova Scotia (NS)"}, {"front": "Charlottetown", "back": "YYG", "category": "Prince Edward Island (PE)"}, {"front": "Deer Lake", "back": "YDF", "category": "Newfoundland and Labrador (NL)"}, {"front": "Goose Bay", "back": "YYR", "category": "Newfoundland and Labrador (NL)"}, {"front": "St. John's", "back": "YYT", "category": "Newfoundland and Labrador (NL)"}, {"front": "Wabush", "back": "YWK", "category": "Newfoundland and Labrador (NL)"}, {"front": "Gander", "back": "YQX", "category": "Newfoundland and Labrador (NL)"}, {"front": "Whitehorse", "back": "YXY", "category": "Yukon (YT)"}, {"front": "Inuvik", "back": "YEV", "category": "Northwest Territories (NT)"}, {"front": "Yellowknife", "back": "YZF", "category": "Northwest Territories (NT)"}, {"front": "Iqaluit / Frobisher Bay", "back": "YFB", "category": "Nunavut (NU)"}, {"front": "Rankin Inlet", "back": "YRT", "category": "Nunavut (NU)"}];
+const categories = ["All", ...Array.from(new Set(allCards.map(c => c.category)))];
+const state = {
+  mode: localStorage.getItem("ca_mode") || "flash",
+  direction: localStorage.getItem("ca_dir") || "cityToCode",
+  category: localStorage.getItem("ca_category") || "All",
+  search: localStorage.getItem("ca_search") || "",
+  index: Number(localStorage.getItem("ca_index") || 0),
+  flipped: false,
+  wrongOnly: localStorage.getItem("ca_wrongOnly") === "1",
+  correct: Number(localStorage.getItem("ca_correct") || 0),
+  wrong: Number(localStorage.getItem("ca_wrong") || 0),
+  wrongSet: JSON.parse(localStorage.getItem("ca_wrongSet") || "[]")
+};
+let filtered = [], quizAnswer = null;
+const el = id => document.getElementById(id);
+function save(){localStorage.setItem("ca_mode",state.mode);localStorage.setItem("ca_dir",state.direction);localStorage.setItem("ca_category",state.category);localStorage.setItem("ca_search",state.search);localStorage.setItem("ca_index",state.index);localStorage.setItem("ca_wrongOnly",state.wrongOnly?"1":"0");localStorage.setItem("ca_correct",state.correct);localStorage.setItem("ca_wrong",state.wrong);localStorage.setItem("ca_wrongSet",JSON.stringify(state.wrongSet));}
+function keyFor(c){return c.front+"|"+c.back+"|"+c.category;}
+function applyFilters(){const q=state.search.trim().toLowerCase();filtered=allCards.filter(c=>(state.category==="All"||c.category===state.category)&&(!q||(c.front+" "+c.back+" "+c.category).toLowerCase().includes(q))&&(!state.wrongOnly||state.wrongSet.includes(keyFor(c))));if(!filtered.length||state.index>=filtered.length)state.index=0;save();render();}
+function sides(card){if(!card)return{front:"No cards found",back:"Try another filter",cat:""};return state.direction==="cityToCode"?{front:card.front,back:card.back,cat:card.category}:{front:card.back,back:card.front,cat:card.category};}
+function renderCats(){const sel=el("category");sel.innerHTML=categories.map(c=>`<option value="${c}">${c}</option>`).join("");sel.value=state.category;}
+function renderButtons(){el("modeFlash").className=state.mode==="flash"?"primary":"secondary";el("modeQuiz").className=state.mode==="quiz"?"primary":"secondary";el("dirCity").className=state.direction==="cityToCode"?"primary":"secondary";el("dirCode").className=state.direction==="codeToCity"?"primary":"secondary";el("wrongOnlyBtn").className=state.wrongOnly?"primary":"secondary";}
+function render(){renderButtons();renderCats();el("countCards").textContent=filtered.length;el("countCorrect").textContent=state.correct;el("countWrong").textContent=state.wrong;el("flashView").classList.toggle("hidden",state.mode!=="flash");el("quizView").classList.toggle("hidden",state.mode!=="quiz");if(state.mode==="flash"){const d=sides(filtered[state.index]);el("frontCat").textContent=d.cat;el("backCat").textContent=d.cat;el("frontMain").textContent=d.front;el("backMain").textContent=d.back;el("cardWrap").classList.toggle("flipped",!!state.flipped);}else renderQuiz();}
+function nextCard(){if(filtered.length){state.index=(state.index+1)%filtered.length;state.flipped=false;save();render();}}
+function prevCard(){if(filtered.length){state.index=(state.index-1+filtered.length)%filtered.length;state.flipped=false;save();render();}}
+function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
+function shuffleFiltered(){shuffleArray(filtered);state.index=0;state.flipped=false;save();render();}
+function markWrong(card){const k=keyFor(card);if(!state.wrongSet.includes(k))state.wrongSet.push(k);state.wrong+=1;save();}
+function clearWrong(card){const k=keyFor(card);state.wrongSet=state.wrongSet.filter(x=>x!==k);save();}
+function renderQuiz(){const card=filtered[state.index];if(!card){el("quizCat").textContent="";el("quizQuestion").textContent="No cards found";el("quizChoices").innerHTML="";el("quizMsg").textContent="";return;}const correct=state.direction==="cityToCode"?card.back:card.front;const question=state.direction==="cityToCode"?card.front:card.back;el("quizCat").textContent=card.category;el("quizQuestion").textContent=question;el("quizMsg").textContent="";quizAnswer=correct;const pool=allCards.filter(c=>c.category===card.category&&keyFor(c)!==keyFor(card));shuffleArray(pool);const wrongChoices=pool.slice(0,3).map(c=>state.direction==="cityToCode"?c.back:c.front);const options=[correct,...wrongChoices];shuffleArray(options);const holder=el("quizChoices");holder.innerHTML="";options.forEach(opt=>{const b=document.createElement("button");b.className="choice secondary";b.textContent=opt;b.onclick=()=>answerQuiz(b,opt);holder.appendChild(b);});}
+function answerQuiz(btn,opt){const card=filtered[state.index];const buttons=[...document.querySelectorAll('#quizChoices .choice')];buttons.forEach(b=>b.disabled=true);if(opt===quizAnswer){btn.classList.add('good');el("quizMsg").textContent="Correct";state.correct+=1;clearWrong(card);}else{btn.classList.add('bad');const goodBtn=buttons.find(b=>b.textContent===quizAnswer);if(goodBtn)goodBtn.classList.add('good');el("quizMsg").textContent="Wrong";markWrong(card);}save();el("countCorrect").textContent=state.correct;el("countWrong").textContent=state.wrong;}
+el("search").value=state.search;el("search").addEventListener("input",e=>{state.search=e.target.value;state.index=0;save();applyFilters();});el("category").addEventListener("change",e=>{state.category=e.target.value;state.index=0;save();applyFilters();});
+el("modeFlash").onclick=()=>{state.mode="flash";save();render();};el("modeQuiz").onclick=()=>{state.mode="quiz";save();render();};el("dirCity").onclick=()=>{state.direction="cityToCode";state.flipped=false;save();render();};el("dirCode").onclick=()=>{state.direction="codeToCity";state.flipped=false;save();render();};el("prevBtn").onclick=prevCard;el("nextBtn").onclick=nextCard;el("shuffleBtn").onclick=shuffleFiltered;el("wrongOnlyBtn").onclick=()=>{state.wrongOnly=!state.wrongOnly;state.index=0;save();applyFilters();};el("resetBtn").onclick=()=>{["ca_mode","ca_dir","ca_category","ca_search","ca_index","ca_wrongOnly","ca_correct","ca_wrong","ca_wrongSet"].forEach(k=>localStorage.removeItem(k));location.reload();};el("quizSkip").onclick=nextCard;el("quizNext").onclick=nextCard;el("cardWrap").onclick=()=>{if(filtered.length){state.flipped=!state.flipped;save();render();}};
+renderCats();applyFilters();
+</script></body></html>
